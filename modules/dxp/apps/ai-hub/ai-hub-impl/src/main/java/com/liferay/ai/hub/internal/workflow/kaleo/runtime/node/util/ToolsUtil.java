@@ -8,6 +8,7 @@ package com.liferay.ai.hub.internal.workflow.kaleo.runtime.node.util;
 import com.liferay.ai.hub.internal.assistant.tool.CatalogBuilderTools;
 import com.liferay.ai.hub.internal.assistant.tool.IRToPageSpecTools;
 import com.liferay.ai.hub.internal.assistant.tool.PageSpecToIRTools;
+import com.liferay.ai.hub.internal.assistant.tool.SiteBuilderTools;
 import com.liferay.ai.hub.internal.assistant.tool.SiteFragmentTools;
 import com.liferay.ai.hub.internal.assistant.tool.SitePageTools;
 import com.liferay.ai.hub.internal.assistant.tool.WorkflowNodeTools;
@@ -51,6 +52,17 @@ public class ToolsUtil {
 			return new Object[] {new CatalogBuilderTools(companyId)};
 		}
 
+		if (_siteBuilderNodeNames.contains(currentKaleoNode.getName())) {
+			return new Object[] {
+				new SiteBuilderTools(
+					GetterUtil.getString(workflowContext.get("accessToken")),
+					companyId,
+					GetterUtil.getString(
+						workflowContext.get("sseEventSinkKey")),
+					GetterUtil.getString(workflowContext.get("userToken")))
+			};
+		}
+
 		if (_fragmentLoaderNodeNames.contains(currentKaleoNode.getName())) {
 			return new Object[] {
 				new SiteFragmentTools(
@@ -87,6 +99,10 @@ public class ToolsUtil {
 
 	private static final Set<String> _pageSpecToIRNodeNames = Set.of(
 		"pageSpecToIR");
+
+	private static final Set<String> _siteBuilderNodeNames = Set.of(
+		"cacheFragments", "cacheSitePlan", "createFragments", "createPages",
+		"createSite");
 
 	private static final Set<String> _sitePageToolsNodeNames = Set.of(
 		"pageFetcher", "pageUpdater");
